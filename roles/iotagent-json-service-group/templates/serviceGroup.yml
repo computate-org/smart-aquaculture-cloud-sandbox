@@ -1,0 +1,11 @@
+---
+apikey: "{{ values.service_group.apikey }}"
+cbHost: "{{ context_broker_base_url }}"
+entity_type: "{{ ENTITY_TYPE }}"
+resource: "{{ values.service_group.resource }}"
+attributes:
+{% for key, attribute in smart_data_model.attributes.items() %}
+  - object_id: {{ key }}
+    name: {{ smart_data_model.attributes[key].name | default(key) }}
+    type: {{ smart_data_model.attributes[key].type }}
+{% endfor %}

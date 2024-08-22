@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: iotagent
+  name: iotagent-json
+  labels:
+    app.kubernetes.io/instance: iotagent-json
+    app.kubernetes.io/name: iotagent-json
+spec:
+  ports:
+    - name: http
+      port: {{ IOTA_HTTP_PORT }}
+      protocol: TCP
+      targetPort: {{ IOTA_HTTP_PORT }}
+    - name: north
+      port: {{ IOTA_NORTH_PORT }}
+      protocol: TCP
+      targetPort: {{ IOTA_NORTH_PORT }}
+  selector:
+    app.kubernetes.io/instance: iotagent-json
+    app.kubernetes.io/name: iotagent-json
+  type: ClusterIP

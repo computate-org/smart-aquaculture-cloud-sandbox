@@ -1,0 +1,11 @@
+---
+
+- name: "Install iotagent-json service on OpenShift"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'service-iotagent-json.yaml') }}"
+- name: "Install iotagent-json deployment on OpenShift"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'deployment-iotagent-json.yaml') }}"
+

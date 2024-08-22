@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: iotagent
+  name: iotagent-json
+  labels:
+    app.kubernetes.io/instance: iotagent-json
+    app.kubernetes.io/name: iotagent-json
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: iotagent-json
+      app.kubernetes.io/name: iotagent-json
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: iotagent-json
+        app.kubernetes.io/name: iotagent-json
+    spec:
+      containers:
+        - env:
+            - name: IOTA_CB_HOST
+              value: '{{ IOTA_CB_HOST }}'
+            - name: IOTA_CB_PORT
+              value: '{{ IOTA_CB_PORT }}'
+            - name: IOTA_NORTH_PORT
+              value: '{{ IOTA_NORTH_PORT }}'
+            - name: IOTA_REGISTRY_TYPE
+              value: 'mongodb'
+            - name: IOTA_LOG_LEVEL
+              value: '{{ IOTA_LOG_LEVEL }}'
+            - name: IOTA_TIMESTAMP
+              value: 'true'
+            - name: IOTA_CB_NGSI_VERSION
+              value: 'ld'
+            - name: IOTA_JSON_LD_CONTEXT
+              value: >-
+                https://raw.githubusercontent.com/computate-org/smartabyar-smartvillage-static/main/fiware/context.jsonld
+                ,https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld
+            - name: IOTA_AUTOCAST
+              value: 'true'
+            - name: IOTA_MONGO_HOST
+              value: "{{ IOTA_MONGO_HOST }}"
+            - name: IOTA_MONGO_PORT
+              value: '{{ IOTA_MONGO_PORT }}'
+            - name: IOTA_MONGO_USER
+              value: '{{ IOTA_MONGO_USER }}'
+            - name: IOTA_MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ IOTA_MONGO_SECRET_NAME }}"
+                  key: "{{ IOTA_MONGO_SECRET_KEY }}"
+            - name: IOTA_MONGO_DB
+              value: '{{ IOTA_MONGO_DB }}'
+            - name: IOTA_HTTP_PORT
+              value: '{{ IOTA_HTTP_PORT }}'
+            - name: IOTA_PROVIDER_URL
+              value: 'http://iotagent-json.iotagent.svc:{{ IOTA_NORTH_PORT }}'
+  
+            - name: IOTA_MQTT_DISABLED
+              value: 'true'
+            - name: IOTA_AMQP_HOST
+              value: '{{ IOTA_AMQP_HOST }}'
+            - name: IOTA_AMQP_PORT
+              value: '{{ IOTA_AMQP_PORT }}'
+            - name: IOTA_AMQP_USERNAME
+              value: '{{ IOTA_AMQP_USERNAME }}'
+            - name: IOTA_AMQP_EXCHANGE
+              value: 'amq.topic'
+            - name: IOTA_AMQP_DURABLE
+              value: 'true'
+            - name: IOTA_AMQP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ IOTA_AMQP_SECRET_NAME}}"
+                  key: "{{ IOTA_AMQP_SECRET_KEY }}"
+            - name: IOTA_AMQP_REJECT_UNAUTHORIZED
+              value: 'true'
+          image: 'docker.io/fiware/iotagent-json:2.4.2'
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 7896
+            timeoutSeconds: 30
+          name: iotagent-json
+          ports:
+            - containerPort: {{ IOTA_HTTP_PORT }}
+              name: http
+              protocol: TCP
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: {{ IOTA_HTTP_PORT }}
+            timeoutSeconds: 30
+          resources:
+            limits:
+              cpu: '{{ IOTA_LIMITS_CPU }}'
+              memory: '{{ IOTA_LIMITS_MEMORY }}'
+            requests:
+              cpu: '{{ IOTA_REQUESTS_CPU }}'
+              memory: '{{ IOTA_REQUESTS_MEMORY }}'
+      serviceAccountName: default
+      volumes: null
