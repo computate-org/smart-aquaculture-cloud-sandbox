@@ -49,26 +49,55 @@ Have you ever written an exciting piece of code, or automation, just to realize 
 
 For the rest of the course material to run smooth, you will need to run this list of prerequisite commands the first time you run the course, and again if your course is shut down after being idle. The python environment and it's extra packages that are required are reset, when this workbench is shutdown and restarted. **In case you are restarting the workbench**, you should only need to run the second section `Install prerequisite Ansible automation tools` below. 
 
-# Install prerequisite Ansible automation tools
+## Install Python pip, Bask Kernel for Jupyter, and VSCode Development Environment
 
-## Install prerequisite Python packages for Ansible
+## Install Python dependencies on Linux
 
-Whenever I install Ansible, I find there are some required Python dependencies. Install the `setuptools_rust` and `wheel` Python dependencies below. 
+Most operating systems come with python3, or have a way to install python 3. 
+For this course, you will want to have python3, pip, and virtualenv commands installed. 
+Try running these commands in your terminal. 
 
+```bash
+sudo dnf install -y python3
+sudo dnf install -y python3-pip
+pip install virtualenv
+```
+
+## Install Python dependencies on MacOSX
+
+```bash
+brew install git python gnu-tar
+pip3 install virtualenv
+```
+
+## Install the latest Python and setup a new Python virtualenv
+
+This step might be virtualenv-3 for you. 
+
+```bash
+virtualenv ~/python
+
+source ~/python/bin/activate
+echo "source ~/python/bin/activate" | tee -a ~/.bashrc
+source ~/.bashrc
+```
+
+## Python Pip
+
+We will upgrade pip to get the latest python dependencies. 
+
+```bash
+python3 -m pip install --upgrade pip
+```
+
+## Install the latest Ansible
+
+Whenever I install Ansible, I find there are some required 
+Python dependencies. Install the `setuptools_rust` and `wheel` 
+Python dependencies below, then `ansible`. 
 
 ```bash
 pip install setuptools_rust wheel
-echo DONE
-```
-
-## Upgrade pip the python package manager
-
-Next upgrade pip, the python package manager for the latest python package support. 
-
-
-```bash
-pip install --upgrade pip
-echo DONE
 ```
 
 ## Install Ansible automation tools
@@ -77,17 +106,29 @@ Ansible is the enterprise open source standard tool for automating everything on
 
 ```bash
 pip install ansible kubernetes openshift jmespath pika --upgrade
-which ansible-playbook
-echo DONE
 ```
 
-## Next...
-If you have successfully ran all of the commands above, congratulations, you are ready to move on to the next notebook in the course. 
-- If you have additional questions or issues, please [create an issue for the course here](https://github.com/smartabyar-smartvillage/smartabyar-smartvillage-nerc-course/issues). 
-- Otherwise, please continue to the next notebook [02-deploy-microservices.ipynb](02-deploy-microservices.ipynb). 
-
-
+## Install the latest Ansible Galaxy collections for kubernetes.core
 
 ```bash
-
+ansible-galaxy collection install kubernetes.core --upgrade
 ```
+
+## Bash Kernel for Jupyter
+
+For the rest of the course we will be running terminal commands directly from a Jupyter Notebook in VSCode. 
+For this you will want to install the Bash Kernel for Jupyter. 
+This is easy to install with python pip dependencies. 
+Open a terminal on your computer and run the commands below to install the Bash Kernel for Jupyter. 
+
+```bash
+pip3 install bash_kernel
+python3 -m bash_kernel.install
+```
+
+If you have previously installed VSCode, you will want to close VSCode and reopen it to load the Bash Kernel. 
+
+## Next...
+If you have successfully ran all of the commands above, congratulations, you are ready to move on to the next document in the course. 
+- If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/computate/issues). 
+- Otherwise, please continue to the next document [01-install-vscode.md](01-install-vscode.md). 

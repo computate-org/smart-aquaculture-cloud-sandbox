@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: iotagent
   name: iotagent-json
+  namespace: "{{ IOTAGENT_NAMESPACE }}"
   labels:
     app.kubernetes.io/instance: iotagent-json
     app.kubernetes.io/name: iotagent-json

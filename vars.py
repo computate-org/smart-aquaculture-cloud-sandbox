@@ -40,6 +40,10 @@ def query(type, kind, resource_name, namespace, api_version=None):
                 v1 = kubernetes.client.NetworkingV1Api()
                 ingress = v1.read_namespaced_ingress(resource_name, namespace)
                 return [ingress]
+            elif kind == 'Route':
+                v1 = kubernetes.client.NetworkingV1Api()
+                route = v1.read_namespaced_route(resource_name, namespace)
+                return [route]
     except Exception as ex:
 #        raise Exception('%s: %s - %s' % (k, v, ex), ex)
         return [{"data":{}}]

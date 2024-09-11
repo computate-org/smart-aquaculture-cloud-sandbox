@@ -38,33 +38,6 @@ QUESTIONS
 
 For questions about this open source license, please contact our public mailing list at computate@group.computate.org
 
-
-## Install Python pip, Bask Kernel for Jupyter, and VSCode Development Environment
-
-## Pip
-
-You may want to update pip. Do this by running the following:
-
-
-```bash
-python3 -m pip install --upgrade pip
-```
-
-## Bash Kernel for Jupyter
-
-For the rest of the course we will be running terminal commands directly from a Jupyter Notebook in VSCode. 
-For this you will want to install the Bash Kernel for Jupyter. 
-This is easy to install with python pip dependencies. 
-Open a terminal on your computer and run the commands below to install the Bash Kernel for Jupyter. 
-
-
-```bash
-pip3 install bash_kernel
-python3 -m bash_kernel.install
-```
-
-If you have previously installed VSCode, you will want to close VSCode and reopen it to load the Bash Kernel. 
-
 ## VSCode
 
 Developing software is not easy without the right tools. 
@@ -87,4 +60,7 @@ Install the following plugins which will be used for the rest of the course.
 And my favorite plugin if you love Vim: 
 - Vim: Vim emulation for Visual Studio Code
 
-
+## Next...
+If you have successfully ran all of the commands above, congratulations, you are ready to move on to the next notebook in the course. 
+- If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/computate/issues). 
+- Otherwise, please continue to the next document [02-setup-developer-sandbox.ipynb](02-setup-developer-sandbox.ipynb). 

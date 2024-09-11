@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scorpiobroker
-  namespace: "{{ SCORPIOBROKER_NAMESPACE}}"
+  namespace: "{{ SCORPIOBROKER_NAMESPACE }}"
   labels:
     app.kubernetes.io/instance: demo-scorpiobroker
     app.kubernetes.io/name: scorpiobroker
