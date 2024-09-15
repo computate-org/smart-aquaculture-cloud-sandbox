@@ -3,8 +3,10 @@
 - name: "Install scorpiobroker service on OpenShift"
   k8s:
     state: present
+    namespace: "{{ SCORPIOBROKER_NAMESPACE }}"
     definition: "{{ lookup('template', 'service-scorpiobroker.yaml') }}"
 - name: "Install scorpiobroker deployment on OpenShift"
   k8s:
     state: present
+    namespace: "{{ SCORPIOBROKER_NAMESPACE }}"
     definition: "{{ lookup('template', 'deployment-scorpiobroker.yaml') }}"
