@@ -65,6 +65,61 @@ oc create rolebinding python-edit-rolebindings --role=python-edit-rolebindings \
 echo DONE
 ```
 
+### If the oc command is not working for you
+
+If the oc command is not working for you on Microsoft Windows or MacOSX, 
+you can add the required roles and rolebindings directly to the OpenShift Console. 
+There a circle button with a plus in the middle for adding resources like this manually. 
+Paste this whole yaml file in the box, then click `Save`. 
+
+```yaml
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: python-edit-rolebindings
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - roles
+      - rolebindings
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: python-edit
+subjects:
+  - kind: ServiceAccount
+    name: python
+    namespace: computate-dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: python-edit-rolebindings
+subjects:
+  - kind: ServiceAccount
+    name: python
+    namespace: computate-dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: python-edit-rolebindings
+```
+
 ## Set up an OpenShift AI Workbench
 
 ### Accessing OpenShift AI
