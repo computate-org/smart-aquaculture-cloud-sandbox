@@ -9,6 +9,7 @@ import yaml
 import re
 import kubernetes
 import base64
+from openshift.dynamic import DynamicClient
 
 def split(str, separator):
     return str.split(separator)
@@ -30,24 +31,31 @@ def lookup(lookup, arg1):
         return os.getenv(arg1)
 
 def query(type, kind, resource_name, namespace, api_version=None):
-    try:
-        if type == 'kubernetes.core.k8s':
-            if kind == 'Secret':
+    if type == 'kubernetes.core.k8s':
+        if kind == 'Secret':
+            try:
                 v1 = kubernetes.client.CoreV1Api()
                 secret = v1.read_namespaced_secret(resource_name, namespace)
                 return [secret]
-            elif kind == 'Ingress':
+            except Exception as ex:
+                #raise Exception('%s: %s - %s' % (k, v, ex), ex)
+                return [{"data":{}}]
+        elif kind == 'Ingress':
+            try:
                 v1 = kubernetes.client.NetworkingV1Api()
                 ingress = v1.read_namespaced_ingress(resource_name, namespace)
                 return [ingress]
-            elif kind == 'Route':
-                v1 = kubernetes.client.NetworkingV1Api()
-                route = v1.read_namespaced_route(resource_name, namespace)
+            except Exception as ex:
+                #raise Exception('%s: %s - %s' % (k, v, ex), ex)
+                return [{"spec":{}}]
+        elif api_version != None:
+            try:
+                route = openshift_client.resources.get(api_version='route.openshift.io/v1', kind='Route').get(name=resource_name, namespace=namespace)
                 return [route]
-    except Exception as ex:
-#        raise Exception('%s: %s - %s' % (k, v, ex), ex)
-        return [{"data":{}}]
-    return [{"data":{}}]
+            except Exception as ex:
+                #raise Exception('%s: %s - %s' % (k, v, ex), ex)
+                return [{"spec":{}}]
+    return [{"spec":{}}]
 
 
 # define a custom representer for strings
@@ -55,7 +63,10 @@ def quoted_presenter(dumper, data):
     return dumper.represent_scalar('tag:yaml.org,2002:str', data, style="'")
 
 if __name__ == '__main__':
-    kubernetes.config.load_kube_config()
+    kubernetes.config.load_incluster_config()
+    k8s_client = kubernetes.client.ApiClient()
+    openshift_client = DynamicClient(k8s_client)
+
     parser = argparse.ArgumentParser(description='Parse vars.yaml file for a computate project')
     parser.add_argument('path', nargs='?', default='vars.yaml', help='the path to the vars.yaml file for the project to generate')
     args = parser.parse_args()
