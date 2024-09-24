@@ -34,6 +34,8 @@ spec:
               value: '60000'
             - name: QUARKUS_VERTX_WARNING_EXCEPTION_TIME
               value: '30000'
+            - name: QUARKUS_LOG_LEVEL
+              value: 'debug'
 
             - name: DBHOST
               value: "{{ DBHOST }}"
