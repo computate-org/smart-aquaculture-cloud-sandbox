@@ -61,8 +61,6 @@ oc create role python-edit-rolebindings \
 
 oc create rolebinding python-edit-rolebindings --role=python-edit-rolebindings \
   --serviceaccount=$(oc project -q):python
-
-echo DONE
 ```
 
 ### If the oc command is not working for you
@@ -214,4 +212,4 @@ From now on, you can access the rest of the Jupyter Notebooks in your OpenShift 
 If you have successfully ran all of the commands above, congratulations, you are ready to move on to the next notebook in the course. 
 
 - If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/computate/issues). 
-- Otherwise, please continue to the next document [01-install-prerequisites.ipynb](01-install-prerequisites.ipynb). 
+- Otherwise, please continue to the next document [01-install-prerequisites.ipynb](02-install-prerequisites.ipynb). 

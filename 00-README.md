@@ -157,7 +157,6 @@ Run this command to see what projects are available to you, and what project you
 
 ```bash
 oc projects
-echo DONE
 ```
 
 Run this command to switch to your project: 
@@ -165,11 +164,10 @@ Run this command to switch to your project:
 
 ```bash
 oc project $(oc projects -q | grep '.*-dev$')
-echo DONE
 ```
 
 ## Next...
 If you have successfully ran all of the commands above, congratulations, you are ready to move on to the next notebook in the course. 
 
 - If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/computate/issues). 
-- Otherwise, please continue to the next document [00-setup-openshift-ai-workbench.md](00-setup-openshift-ai-workbench.md). 
+- Otherwise, please continue to the next document [00-setup-openshift-ai-workbench.md](01-setup-openshift-ai-workbench.md). 
