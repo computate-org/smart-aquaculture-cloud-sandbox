@@ -12,7 +12,7 @@ PARENT_SRC: "{{ (SITE_SRC + '/..') | realpath }}"
 # The vars.yaml filename to load when running in development. 
 VARS_FILENAME: vars.yaml
 # The vars.yaml path to load when running in development. 
-VARS_PATH: "{{ SITE_SRC }}/kustomize/overlays/openshift-ai/{{ VARS_FILENAME }}"
+VARS_PATH: "{{ lookup('env', 'HOME') }}/cloud-sandbox-powered-by-fiware/{{ VARS_FILENAME }}"
 # A shorter name for the application used for database names, collections, and artifact IDs. 
 SITE_SHORT_NAME: "{{ SITE_NAME | replace('-', '') | replace('_', '') | replace('.', '') | lower }}"
 # A pretty version of the site name. 
@@ -42,7 +42,7 @@ SSL_VERIFY: false
 # The namespace in OpenShift where the site will run. 
 SITE_NAMESPACE: "{{ lookup('env', 'SITE_NAMESPACE') }}"
 # The host name of the site. 
-SITE_HOST_NAME: "{{ query('kubernetes.core.k8s', kind='Route', resource_name='keycloak', namespace=SITE_NAMESPACE, api_version='route.openshift.io/v1')[0].spec.host | replace('keycloak.', 'site.') }}"
+SITE_HOST_NAME: "{{ query('kubernetes.core.k8s', kind='Route', resource_name='keycloak', namespace=SITE_NAMESPACE, api_version='route.openshift.io/v1')[0].spec.host | replace('keycloak-', 'site-') }}"
 # The base URL of the site. 
 SITE_BASE_URL: "https://{{ SITE_HOST_NAME }}"
 # The public facing URL for the site. 
