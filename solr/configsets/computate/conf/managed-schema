@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Solr managed schema - automatically generated - DO NOT EDIT -->
 <schema name="example-data-driven-schema" version="1.6">
-  <uniqueKey>id</uniqueKey>
+  <uniqueKey>solrId</uniqueKey>
   <fieldType name="ancestor_path" class="solr.TextField">
     <analyzer type="index">
       <tokenizer class="solr.KeywordTokenizerFactory"/>
@@ -436,7 +436,7 @@
     </analyzer>
   </fieldType>
 
-  <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="solrId" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="_version_" type="plong" indexed="true" stored="true"/>
   <field name="content_type" type="string" indexed="true" stored="true"/>
   <field name="doc_type" type="string" indexed="true" stored="true"/>
