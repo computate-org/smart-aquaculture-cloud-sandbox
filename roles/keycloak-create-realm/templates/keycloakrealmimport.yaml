@@ -2,19 +2,19 @@ id: {{ AUTH_REALM }}
 realm: {{ AUTH_REALM }}
 enabled: true
 displayName: {{ AUTH_REALM }}
-registrationAllowed: true
+registrationAllowed: false
 resetPasswordAllowed: true
-editUsernameAllowed: true
+editUsernameAllowed: false
 rememberMe: true
-verifyEmail: true
-loginWithEmailAllowed: true
+verifyEmail: false
+loginWithEmailAllowed: false
 identityProviders:
   - displayName: GitHub
     enabled: true
     alias: github
     providerId: github
     updateProfileFirstLoginMode: "on"
-    trustEmail: false
+    trustEmail: true
     storeToken: false
     addReadTokenRoleOnCreate: false
     authenticateByDefault: false
