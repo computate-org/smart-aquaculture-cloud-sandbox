@@ -10,6 +10,7 @@ import re
 import kubernetes
 import base64
 from openshift.dynamic import DynamicClient
+from distutils.util import strtobool
 
 def split(str, separator):
     return str.split(separator)
@@ -26,9 +27,25 @@ def realpath(path):
 def b64decode(str):
     return base64.b64decode(str).decode("utf-8")
 
-def lookup(lookup, arg1):
+def to_bool(s):
+    if s == None:
+        return False
+    else:
+        return bool(strtobool(str(s)))
+
+def lookup(lookup, arg1, errors='strict'):
     if lookup == 'env':
         return os.getenv(arg1)
+    elif lookup == 'file':
+        if os.path.exists(arg1):
+            try:
+                with open(arg1, 'r') as file:
+                    file_content = file.read()
+                    return file_content
+            except Exception as ex:
+                return None
+        else:
+            return None
 
 def query(type, kind, resource_name, namespace, api_version=None):
     if type == 'kubernetes.core.k8s':
@@ -63,7 +80,10 @@ def quoted_presenter(dumper, data):
     return dumper.represent_scalar('tag:yaml.org,2002:str', data, style="'")
 
 if __name__ == '__main__':
-    kubernetes.config.load_incluster_config()
+    if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace'):
+        kubernetes.config.load_incluster_config()
+    else:
+        kubernetes.config.load_kube_config()
     k8s_client = kubernetes.client.ApiClient()
     openshift_client = DynamicClient(k8s_client)
 
@@ -95,6 +115,7 @@ if __name__ == '__main__':
                 t.environment.filters['dirname'] = dirname
                 t.environment.filters['realpath'] = realpath
                 t.environment.filters['b64decode'] = b64decode
+                t.environment.filters['bool'] = to_bool
                 t.environment.globals.update(lookup = lookup)
                 t.environment.globals.update(query = query)
                 new_data[k] = t.render(**new_data)

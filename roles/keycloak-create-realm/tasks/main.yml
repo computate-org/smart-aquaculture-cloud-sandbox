@@ -1,54 +1,170 @@
 ---
-- name: Get Keycloak auth token
-  ansible.builtin.uri:
-    url: "{{ AUTH_URL }}/realms/master/protocol/openid-connect/token"
-    method: POST
-    body_format: form-urlencoded
-    body:
-      username: "{{ AUTH_ADMIN_USERNAME }}"
-      password: "{{ AUTH_ADMIN_PASSWORD }}"
-      grant_type: password
-      client_id: admin-cli
-    validate_certs: "{{ SSL_VERIFY }}"
-    status_code:
-      - 200
-  register: AUTH_TOKEN
-  ignore_errors: "{{  DELETE_CRD is defined and DELETE_CRD }}"
-- name: Create Keycloak Realm
-  ansible.builtin.uri:
-    url: "{{ AUTH_URL }}/admin/realms"
-    validate_certs: "{{ SSL_VERIFY }}"
-    method: POST
-    headers:
-      Authorization: "Bearer {{ AUTH_TOKEN.json.access_token }}"
-    status_code:
-      - 201
-      - 409
-    body_format: json
-    body: "{{ lookup('template', 'keycloakrealmimport.yaml') | from_yaml | to_json }}"
-- name: Get rsa-enc-generated Key Provider
-  ansible.builtin.uri:
-    url: "{{ AUTH_URL }}/admin/realms/{{ AUTH_REALM }}/components"
-    validate_certs: "{{ SSL_VERIFY }}"
-    headers:
-      Authorization: "Bearer {{ AUTH_TOKEN.json.access_token }}"
-    status_code:
-      - 200
-    body_format: json
-    body: "{{ lookup('template', 'keycloakrealmimport.yaml') | from_yaml | to_json }}"
-  register: keycloak_realm_components
-- name: Delete rsa-enc-generated Key Provider
-  ansible.builtin.uri:
-    url: "{{ AUTH_URL }}/admin/realms/{{ AUTH_REALM }}/components/{{ keycloak_realm_components.json | json_query(current_query) | first | default('') }}"
-    validate_certs: "{{ SSL_VERIFY }}"
-    method: DELETE
-    headers:
-      Authorization: "Bearer {{ AUTH_TOKEN.json.access_token }}"
-    status_code:
-      - 202
-      - 204
-    body_format: json
-    body: "{{ lookup('template', 'keycloakrealmimport.yaml') | from_yaml | to_json }}"
-  vars:
-    current_query: "[?name=='rsa-enc-generated'].id"
-  when: (keycloak_realm_components.json | json_query(current_query) | length) > 0
+
+- name: Configure keycloak realm
+  community.general.keycloak_realm:
+    validate_certs: false
+    auth_client_id: admin-cli
+    auth_keycloak_url: "{{ AUTH_URL }}"
+    auth_realm: master
+    auth_username: "{{ AUTH_ADMIN_USERNAME }}"
+    auth_password: "{{ AUTH_ADMIN_PASSWORD }}"
+    state: present
+    id: "{{ AUTH_REALM }}"
+    realm: "{{ AUTH_REALM }}"
+    enabled: true
+    displayName: "{{ AUTH_REALM }}"
+    registrationAllowed: false
+    resetPasswordAllowed: true
+    editUsernameAllowed: false
+    rememberMe: true
+    verifyEmail: false
+    loginWithEmailAllowed: false
+
+- name: "Configure keycloak client scope openid"
+  community.general.keycloak_clientscope:
+    validate_certs: false
+    auth_client_id: admin-cli
+    auth_keycloak_url: "{{ AUTH_URL }}"
+    auth_realm: master
+    auth_username: "{{ AUTH_ADMIN_USERNAME }}"
+    auth_password: "{{ AUTH_ADMIN_PASSWORD }}"
+    state: present
+    id: "{{ AUTH_REALM }}-openid"
+    realm: "{{ AUTH_REALM }}"
+    name: "openid"
+    description: A client scope for the openid client
+    protocol: openid-connect
+    attributes:
+      include.in.token.scope: 'true'
+    protocolMappers:
+      - config:
+          access.token.claim: 'true'
+          introspection.token.claim: 'true'
+        id: "{{ AUTH_REALM }}-openid-sub"
+        name: "sub"
+        protocol: openid-connect
+        protocolMapper: oidc-sub-mapper
+
+- name: "Configure keycloak client scope {{ AUTH_CLIENT }}"
+  community.general.keycloak_clientscope:
+    validate_certs: false
+    auth_client_id: admin-cli
+    auth_keycloak_url: "{{ AUTH_URL }}"
+    auth_realm: master
+    auth_username: "{{ AUTH_ADMIN_USERNAME }}"
+    auth_password: "{{ AUTH_ADMIN_PASSWORD }}"
+    state: present
+    id: "{{ AUTH_REALM }}-{{ AUTH_CLIENT }}"
+    realm: "{{ AUTH_REALM }}"
+    name: "{{ AUTH_CLIENT }}"
+    description: A client scope for the {{ AUTH_CLIENT }} client
+    protocol: openid-connect
+    attributes:
+      include.in.token.scope: 'true'
+    protocolMappers:
+      - config:
+          access.token.claim: 'true'
+          id.token.claim: 'false'
+          included.client.audience: '{{ AUTH_CLIENT }}'
+        id: "{{ AUTH_REALM }}-{{ AUTH_CLIENT }}"
+        name: "{{ AUTH_CLIENT }}"
+        protocol: openid-connect
+        protocolMapper: oidc-audience-mapper
+      - config:
+          full.path: "true"
+          introspection.token.claim: "true"
+          userinfo.token.claim: "true"
+          id.token.claim: "true"
+          lightweight.claim: "false"
+          access.token.claim: "true"
+          claim.name: "groups"
+
+- name: "Install keycloak-identity-provider secret on OpenShift"
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'keycloak-identity-provider-secret.yaml') }}"
+    validate_certs: false
+  when: (query('kubernetes.core.k8s', kind='Secret', resource_name=('keycloak-identity-provider'), namespace=AUTH_NAMESPACE)[0].data['GITHUB_AUTH_SECRET'] | default('')) == ''
+- name: Configure Keycloak GitHub identity provider
+  community.general.keycloak_identity_provider:
+    state: present
+    validate_certs: false
+    auth_client_id: admin-cli
+    auth_keycloak_url: "{{ AUTH_URL }}"
+    auth_realm: master
+    auth_username: "{{ AUTH_ADMIN_USERNAME }}"
+    auth_password: "{{ AUTH_ADMIN_PASSWORD }}"
+    enabled: true
+    realm: "{{ AUTH_REALM }}"
+    providerId: github
+    alias: github
+    displayName: GitHub
+    trustEmail: true
+    storeToken: false
+    addReadTokenRoleOnCreate: false
+    authenticateByDefault: false
+    linkOnly: false
+    config:
+      syncMode: "LEGACY"
+      clientId: "{{ query('kubernetes.core.k8s', kind='Secret', resource_name=('keycloak-identity-provider'), namespace=AUTH_NAMESPACE)[0].data['GITHUB_AUTH_CLIENT'] | b64decode }}"
+      clientSecret: "{{ query('kubernetes.core.k8s', kind='Secret', resource_name=('keycloak-identity-provider'), namespace=AUTH_NAMESPACE)[0].data['GITHUB_AUTH_SECRET'] | b64decode }}"
+
+- name: "Disable RSA-OAEP key component from {{ AUTH_REALM }}"
+  community.general.keycloak_component:
+    validate_certs: false
+    auth_client_id: admin-cli
+    auth_keycloak_url: "{{ AUTH_URL }}"
+    auth_realm: master
+    auth_username: "{{ AUTH_ADMIN_USERNAME }}"
+    auth_password: "{{ AUTH_ADMIN_PASSWORD }}"
+    state: absent
+    name: rsa-enc-generated
+    parent_id: "{{ AUTH_REALM }}"
+    provider_id: rsa-enc-generated
+    provider_type: org.keycloak.keys.KeyProvider
+
+- name: "Configure OpenShift client {{ AUTH_CLIENT }}"
+  community.general.keycloak_client:
+    state: present
+    validate_certs: false
+    auth_client_id: admin-cli
+    auth_keycloak_url: "{{ AUTH_URL }}"
+    auth_realm: master
+    auth_username: "{{ AUTH_ADMIN_USERNAME }}"
+    auth_password: "{{ AUTH_ADMIN_PASSWORD }}"
+    realm: "{{ AUTH_REALM }}"
+    id: "{{ AUTH_CLIENT }}"
+    name: "{{ AUTH_CLIENT }}"
+    clientId: "{{ AUTH_CLIENT }}"
+    standardFlowEnabled: true
+    serviceAccountsEnabled: true
+    authorizationServicesEnabled: true
+    frontchannelLogout: true
+    publicClient: false
+    protocol: openid-connect
+    redirectUris: "{{ lookup('template', 'keycloak-redirect-uris.yaml') | from_yaml }}"
+    defaultClientScopes:
+      - openid
+      - profile
+      - "{{ AUTH_CLIENT }}"
+    authorizationSettings:
+      decisionStrategy: AFFIRMATIVE
+
+- name: Get a new Keycloak client secret, passing client_id instead of id
+  community.general.keycloak_clientsecret_info:
+    validate_certs: false
+    auth_client_id: admin-cli
+    auth_keycloak_url: "{{ AUTH_URL }}"
+    auth_realm: master
+    auth_username: "{{ AUTH_ADMIN_USERNAME }}"
+    auth_password: "{{ AUTH_ADMIN_PASSWORD }}"
+    client_id: '{{ AUTH_CLIENT }}'
+    realm: "{{ AUTH_REALM }}"
+  register: AUTH_CLIENT_SECRET
+  # no_log: true
+
+- name: "Install {{ 'keycloak-client-' + (AUTH_CLIENT | lower ) }} secret in namespace {{ SITE_NAMESPACE }}"
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'auth-client-secret.yaml') }}"
+    validate_certs: false

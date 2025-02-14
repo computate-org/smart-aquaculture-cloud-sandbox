@@ -52,15 +52,15 @@ deploy resources in your namespace.
 
 
 ```bash
-oc create rolebinding python-edit --clusterrole=edit \
-  --serviceaccount=$(oc project -q):python
+oc create rolebinding vscode-edit --clusterrole=edit \
+  --serviceaccount=$(oc project -q):vscode
 
-oc create role python-edit-rolebindings \
+oc create role vscode-edit-rolebindings \
   --verb=get,list,watch,create,update,patch,delete \
   --resource=roles,rolebindings
 
-oc create rolebinding python-edit-rolebindings --role=python-edit-rolebindings \
-  --serviceaccount=$(oc project -q):python
+oc create rolebinding vscode-edit-rolebindings --role=vscode-edit-rolebindings \
+  --serviceaccount=$(oc project -q):vscode
 ```
 
 ### If the oc command is not working for you
@@ -75,7 +75,7 @@ Paste this whole yaml file in the box, then click `Save`.
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: python-edit-rolebindings
+  name: vscode-edit-rolebindings
 rules:
   - verbs:
       - get
@@ -94,10 +94,10 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: python-edit
+  name: vscode-edit
 subjects:
   - kind: ServiceAccount
-    name: python
+    name: vscode
     namespace: computate-dev
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -107,15 +107,15 @@ roleRef:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: python-edit-rolebindings
+  name: vscode-edit-rolebindings
 subjects:
   - kind: ServiceAccount
-    name: python
+    name: vscode
     namespace: computate-dev
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: python-edit-rolebindings
+  name: vscode-edit-rolebindings
 ```
 
 ## Set up an OpenShift AI Workbench
@@ -153,11 +153,9 @@ To create a new workbench, click
 <img src="pictures/100002010000009100000021A1D82C0B6349F1C3.png" />.
 
 To stay consistent with the rest of the course, enter the workbench name
-“python”
-<img src="pictures/1000020100000043000000446EA181997A7346B6.png" />.
+`vscode`.
 
-For Image selection, choose “Minimal Python”
-<img src="pictures/100002010000007B0000003FA29A900E8890D587.png" />.
+For Image selection, choose `code-server`
 
 You can leave the rest of the fields as the default. At the very bottom,
 click
@@ -182,7 +180,7 @@ button.
 You will need to authorize yourself access to your workbench. Click
 <img src="pictures/10000201000000CD0000001AA11D3D36B96FAA42.png" />.
 
-## Using an OpenShift AI Python Workbench
+## Using an OpenShift AI vscode Workbench
 
 ### Using a Workbench Terminal to load course resources
 
@@ -190,26 +188,21 @@ You will want to open a Terminal inside your OpenShift AI Workbench to
 load the course resources. There are many ways to open a terminal, but
 here is one that always works.
 
-At the top, click
-<img src="pictures/100002010000002300000017A7751A2F8CB5671D.png" />
-→
-<img src="pictures/100002010000002800000016B63989EE943480F7.png" />
-→
-<img src="pictures/100002010000004D00000018604E6A830090C94F.png" />.
+At the top, click the dropdown menu in the top right → `Terminal` → `New Terminal`. 
 
 
-### Rsync the cloud-sandbox-powered-by-fiware course to your workbench
+### Clone the smart-aquaculture-cloud-sandbox course to your workbench
 
-With the `oc rsync` command, copy the course materials to the default home directory
+With the `git clone` command, retrieve the course materials to the default home directory
 (/opt/app-root/src) of your workbench.
 
 ```bash
-oc rsync ~/Downloads/cloud-sandbox-powered-by-fiware/ python-0:/opt/app-root/src/cloud-sandbox-powered-by-fiware/
+git clone https://github.com/computate-org/smart-aquaculture-cloud-sandbox.git
 ```
 
 ## Next...
 From now on, you can access the rest of the Jupyter Notebooks in your OpenShift AI Workbench. 
 If you have successfully ran all of the commands above, congratulations, you are ready to move on to the next notebook in the course. 
 
-- If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/computate/issues). 
-- Otherwise, please continue to the next document [01-install-prerequisites.ipynb](02-install-prerequisites.ipynb). 
+- If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/smart-aquaculture-cloud-sandbox/issues). 
+- Otherwise, please continue to the next document [02-install-prerequisites.ipynb](02-install-prerequisites.ipynb). 

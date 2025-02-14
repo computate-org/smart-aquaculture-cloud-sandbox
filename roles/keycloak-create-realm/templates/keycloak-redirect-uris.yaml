@@ -1,0 +1,3 @@
+- "https://oauth-openshift.{{ OPENSHIFT_APPS_DOMAIN }}/oauth2callback/Keycloak"
+- "{{ SITE_BASE_URL }}/callback"
+- "{{ SITE_BASE_URL }}/logout"
