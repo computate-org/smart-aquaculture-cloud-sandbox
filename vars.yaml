@@ -6,7 +6,7 @@
 # The path to kustomize resources for production deployment
 OVERLAY_SITE_PATH: kustomize/overlays/prod
 # The wildcard domain suffix where OpenShift Routes are available by default. 
-OPENSHIFT_APPS_DOMAIN: "{{ lookup('env', 'OPENSHIFT_APPS_DOMAIN') | default('apps-crc.testing', true) }}"
+OPENSHIFT_APPS_DOMAIN: "{{ query('kubernetes.core.k8s', kind='Route', resource_name='keycloak', namespace=lookup('env', 'SITE_NAMESPACE'), api_version='route.openshift.io/v1')[0].spec.host | replace('keycloak-' + lookup('env', 'SITE_NAMESPACE') + '.', '') }}"
 # Look up the default container namespace to see if using OpenShift AI.
 USING_OPENSHIFT_AI: "{{ true if lookup('file', '/var/run/secrets/kubernetes.io/serviceaccount/namespace', errors='ignore') else false }}"
 # The name of the OpenShift AI Workbench. 
@@ -51,7 +51,7 @@ SITE_REPO_HTTPS: "{{ SITE_REPO | replace('git@github.com:', 'https://github.com/
 # The port of the site. 
 SITE_PORT: 10230
 # The host name of the site. 
-SITE_HOST_NAME: "{{ lookup('env', 'SITE_HOST_NAME') | default('localhost', true) }}"
+SITE_HOST_NAME: "{{ SITE_SHORT_NAME + '-' + SITE_NAMESPACE + '.' + OPENSHIFT_APPS_DOMAIN }}"
 # The base URL of the site. 
 SITE_BASE_URL: "{{ lookup('env', 'SITE_BASE_URL') | default('http://' + SITE_HOST_NAME + ':' + (SITE_PORT | string), true) }}"
 # The public facing URL for the site. 
