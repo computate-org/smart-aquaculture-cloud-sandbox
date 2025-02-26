@@ -153,8 +153,7 @@ To create a new workbench, click
 <img src="pictures/100002010000009100000021A1D82C0B6349F1C3.png" />.
 
 To stay consistent with the rest of the course, enter the workbench name
-“vscode”
-<img src="pictures/1000020100000043000000446EA181997A7346B6.png" />.
+`vscode`.
 
 For Image selection, choose `code-server`
 
@@ -197,18 +196,18 @@ At the top, click
 <img src="pictures/100002010000004D00000018604E6A830090C94F.png" />.
 
 
-### Rsync the cloud-sandbox-powered-by-fiware course to your workbench
+### Clone the smart-aquaculture-cloud-sandbox course to your workbench
 
 With the `oc rsync` command, copy the course materials to the default home directory
 (/opt/app-root/src) of your workbench.
 
 ```bash
-oc rsync ~/Downloads/cloud-sandbox-powered-by-fiware/ vscode-0:/opt/app-root/src/cloud-sandbox-powered-by-fiware/
+git clone https://github.com/computate-org/smart-aquaculture-cloud-sandbox.git
 ```
 
 ## Next...
 From now on, you can access the rest of the Jupyter Notebooks in your OpenShift AI Workbench. 
 If you have successfully ran all of the commands above, congratulations, you are ready to move on to the next notebook in the course. 
 
-- If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/computate/issues). 
-- Otherwise, please continue to the next document [01-install-prerequisites.ipynb](02-install-prerequisites.ipynb). 
+- If you have additional questions or issues, please [create an issue for the course here](https://github.com/computate-org/smart-aquaculture-cloud-sandbox/issues). 
+- Otherwise, please continue to the next document [02-install-prerequisites.ipynb](02-install-prerequisites.ipynb). 
