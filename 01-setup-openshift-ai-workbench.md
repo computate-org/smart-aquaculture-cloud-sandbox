@@ -188,17 +188,12 @@ You will want to open a Terminal inside your OpenShift AI Workbench to
 load the course resources. There are many ways to open a terminal, but
 here is one that always works.
 
-At the top, click
-<img src="pictures/100002010000002300000017A7751A2F8CB5671D.png" />
-→
-<img src="pictures/100002010000002800000016B63989EE943480F7.png" />
-→
-<img src="pictures/100002010000004D00000018604E6A830090C94F.png" />.
+At the top, click the dropdown menu in the top right → `Terminal` → `New Terminal`. 
 
 
 ### Clone the smart-aquaculture-cloud-sandbox course to your workbench
 
-With the `oc rsync` command, copy the course materials to the default home directory
+With the `git clone` command, retrieve the course materials to the default home directory
 (/opt/app-root/src) of your workbench.
 
 ```bash
