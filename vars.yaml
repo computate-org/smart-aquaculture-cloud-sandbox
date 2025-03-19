@@ -314,7 +314,7 @@ DATABASE_NAMESPACE: "{{ SITE_NAMESPACE }}"
 # The database secret containing the user password to connect to the database. 
 DATABASE_SECRET: "postgres-pguser-{{ SITE_SHORT_NAME }}"
 # The PostgreSQL database host name. 
-DATABASE_HOST: "{{ lookup('env', 'DATABASE_HOST') | default('postgres', true) }}"
+DATABASE_HOST_NAME: "{{ lookup('env', 'DATABASE_HOST_NAME') | default('postgres', true) }}"
 # The PostgreSQL database port. 
 DATABASE_PORT: "{{ lookup('env', 'DATABASE_PORT') | default('30432', true) }}"
 # The PostgreSQL database user name of the site. 
@@ -456,7 +456,7 @@ ENABLE_MQTT: false
 # The namespace in OpenShift where MQTT will run. 
 MQTT_NAMESPACE: "{{ SITE_NAMESPACE }}"
 # The MQTT host. 
-MQTT_HOST: "mqtt.{{ OPENSHIFT_APPS_DOMAIN }}"
+MQTT_HOST_NAME: "mqtt.{{ OPENSHIFT_APPS_DOMAIN }}"
 # The MQTT port. 
 MQTT_PORT: 30883
 # The MQTT user name of the site. 
@@ -477,10 +477,10 @@ AMQP_PORT: 5672
 # The AMQP host name. 
 AMQP_HOST_NAME: "rabbitmq.{{ AMQP_NAMESPACE }}.svc"
 # The AMQP user. 
-AMQP_HOST_USER: "user"
+AMQP_HOST_NAME_USER: "user"
 # The AMQP password. 
-AMQP_HOST_PASSWORD: ""
-#AMQP_HOST_PASSWORD: ""
+AMQP_HOST_NAME_PASSWORD: ""
+#AMQP_HOST_NAME_PASSWORD: ""
 # The AMQP virtual host. 
 AMQP_VIRTUAL_HOST: "%2F"
 
@@ -497,7 +497,7 @@ RABBITMQ_PORT: 30072
 # The AMQP host name. 
 RABBITMQ_HOST_NAME: "rabbitmq.{{ AMQP_NAMESPACE }}.svc"
 # The AMQP user. 
-RABBITMQ_USER: "user"
+RABBITMQ_USERNAME: "user"
 # The AMQP password. 
 RABBITMQ_PASSWORD: ""
 # The AMQP virtual host. 

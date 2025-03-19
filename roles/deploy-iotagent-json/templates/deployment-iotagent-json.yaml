@@ -66,8 +66,8 @@ spec:
   
             - name: IOTA_MQTT_DISABLED
               value: 'true'
-            - name: IOTA_AMQP_HOST
-              value: '{{ IOTA_AMQP_HOST }}'
+            - name: IOTA_AMQP_HOST_NAME
+              value: '{{ IOTA_AMQP_HOST_NAME }}'
             - name: IOTA_AMQP_PORT
               value: '{{ IOTA_AMQP_PORT }}'
             - name: IOTA_AMQP_USERNAME

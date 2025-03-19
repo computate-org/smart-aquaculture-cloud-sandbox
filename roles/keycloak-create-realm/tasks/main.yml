@@ -70,6 +70,14 @@
         name: "{{ AUTH_CLIENT }}"
         protocol: openid-connect
         protocolMapper: oidc-audience-mapper
+      - config:
+          full.path: "true"
+          introspection.token.claim: "true"
+          userinfo.token.claim: "true"
+          id.token.claim: "true"
+          lightweight.claim: "false"
+          access.token.claim: "true"
+          claim.name: "groups"
 
 - name: "Install keycloak-identity-provider secret on OpenShift"
   kubernetes.core.k8s:
