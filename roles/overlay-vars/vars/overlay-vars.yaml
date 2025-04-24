@@ -1,0 +1,24 @@
+---
+GITHUB_ORG: computate-org
+CLUSTER_ADMIN_GROUP: smart-aquaculture
+AUTH_NAMESPACE: keycloak
+OPENSHIFT_APPS_DOMAIN: "{{ query('kubernetes.core.k8s', kind='Route', resource_name='keycloak', namespace=lookup('env', 'SITE_NAMESPACE'), api_version='route.openshift.io/v1')[0].spec.host | replace('keycloak-' + lookup('env', 'SITE_NAMESPACE') + '.', '') }}"
+AUTH_HOST_NAME: "keycloak.{{ OPENSHIFT_APPS_DOMAIN }}"
+AUTH_URL: "https://{{ AUTH_HOST_NAME }}"
+AUTH_REALM: SMARTAQUACULTURE
+AUTH_CLIENT: smartaquaculture
+SITE_NAMESPACE: smartaquaculture
+WORKBENCH_SIZE: 20Gi
+SITE_SHORT_NAME: smartaquaculture
+SITE_NAME: smart-aquaculture
+SITE_DESCRIPTION: Smart Aquaculture
+SITE_MAIN_VERTICLE_PACKAGE: org.computate.smartaquaculture.verticle
+SITE_POM_ARTIFACT_ID: smartaquaculture
+SITE_PORT: 10230
+SITE_SRC: "/opt/app-root/src/{{ SITE_NAME }}"
+SITE_THEME: dark
+COMPUTATE_SRC: "/opt/app-root/src/computate"
+COMPUTATE_VERTX_SRC: "/opt/app-root/src/computate-vertx"
+SOLR_NAMESPACE: solr
+DATABASE_NAMESPACE: postgres
+ENABLE_FIWARE: true

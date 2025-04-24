@@ -1,0 +1,80 @@
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vscode-edit-rolebindings
+  namespace: {{ WORKBENCH_NAMESPACE }}
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - roles
+      - rolebindings
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sa-vscode-edit
+  namespace: {{ WORKBENCH_NAMESPACE }}
+subjects:
+  - kind: ServiceAccount
+    name: deploy-workbench
+    namespace: {{ WORKBENCH_NAMESPACE }}
+  - kind: ServiceAccount
+    name: {{ WORKBENCH_NAME }}
+    namespace: {{ WORKBENCH_NAMESPACE }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sa-vscode-edit-rolebindings
+  namespace: {{ WORKBENCH_NAMESPACE }}
+subjects:
+  - kind: ServiceAccount
+    name: deploy-workbench
+    namespace: {{ WORKBENCH_NAMESPACE }}
+  - kind: ServiceAccount
+    name: {{ WORKBENCH_NAME }}
+    namespace: {{ WORKBENCH_NAMESPACE }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: vscode-edit-rolebindings
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: solr-user
+  namespace: solr
+rules:
+  - verbs:
+      - get
+    apiGroups:
+      - ''
+    resources:
+      - secrets
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: postgres-user
+  namespace: postgres
+rules:
+  - verbs:
+      - get
+    apiGroups:
+      - ''
+    resources:
+      - secrets

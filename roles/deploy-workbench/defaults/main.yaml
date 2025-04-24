@@ -1,0 +1,28 @@
+---
+SITE_NAMESPACE: "{{ lookup('ansible.builtin.file', '/var/run/secrets/kubernetes.io/serviceaccount/namespace') }}"
+GITHUB_ORG: computate-org
+CLUSTER_ADMIN_GROUP: smart-aquaculture
+AUTH_NAMESPACE: "{{ SITE_NAMESPACE }}"
+OPENSHIFT_APPS_DOMAIN: apps-crc.testing
+AUTH_HOST_NAME: "keycloak.{{ OPENSHIFT_APPS_DOMAIN }}"
+AUTH_URL: "https://{{ AUTH_HOST_NAME }}"
+AUTH_REALM: SMARTAQUACULTURE
+AUTH_CLIENT: smartaquaculture
+WORKBENCH_SIZE: 20Gi
+SITE_SHORT_NAME: smartaquaculture
+SITE_NAME: smart-aquaculture
+SITE_DESCRIPTION: Smart Aquaculture
+SITE_MAIN_VERTICLE_PACKAGE: org.computate.smartaquaculture.verticle
+SITE_POM_ARTIFACT_ID: smartaquaculture
+SITE_PORT: 10230
+SITE_SRC: "/opt/app-root/src/{{ SITE_NAME }}"
+SITE_THEME: dark
+COMPUTATE_SRC: "/opt/app-root/src/computate"
+COMPUTATE_VERTX_SRC: "/opt/app-root/src/computate-vertx"
+ZOOKEEPER_NAMESPACE: "{{ SITE_NAMESPACE }}"
+SOLR_NAMESPACE: "{{ SITE_NAMESPACE }}"
+DATABASE_NAMESPACE: "{{ SITE_NAMESPACE }}"
+ENABLE_FIWARE: true
+ADMIN_NAMESPACE: "{{ SITE_NAMESPACE }}"
+AUTH_ADMIN_USERNAME: "{{ query('kubernetes.core.k8s', kind='Secret', resource_name=('keycloak-initial-admin'), namespace=AUTH_NAMESPACE)[0].data['username'] | b64decode }}"
+AUTH_ADMIN_PASSWORD: "{{ query('kubernetes.core.k8s', kind='Secret', resource_name=('keycloak-initial-admin'), namespace=AUTH_NAMESPACE)[0].data['password'] | b64decode }}"
