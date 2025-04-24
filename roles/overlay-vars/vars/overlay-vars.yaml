@@ -1,14 +1,17 @@
 ---
 GITHUB_ORG: computate-org
 CLUSTER_ADMIN_GROUP: smart-aquaculture
-AUTH_NAMESPACE: keycloak
-OPENSHIFT_APPS_DOMAIN: "{{ query('kubernetes.core.k8s', kind='Route', resource_name='keycloak', namespace=lookup('env', 'SITE_NAMESPACE'), api_version='route.openshift.io/v1')[0].spec.host | replace('keycloak-' + lookup('env', 'SITE_NAMESPACE') + '.', '') }}"
+SITE_NAMESPACE: "{{ lookup('file', '/var/run/secrets/kubernetes.io/serviceaccount/namespace') }}"
+WORKBENCH_ADMIN: true
+WORKBENCH_NAMESPACE: "{{ SITE_NAMESPACE }}"
+AUTH_NAMESPACE: "{{ SITE_NAMESPACE }}"
+OPENSHIFT_APPS_DOMAIN: "{{ query('kubernetes.core.k8s', kind='Route', resource_name='keycloak', namespace=SITE_NAMESPACE, api_version='route.openshift.io/v1')[0].spec.host | replace('keycloak-' + lookup('env', 'SITE_NAMESPACE') + '.', '') }}"
 AUTH_HOST_NAME: "keycloak.{{ OPENSHIFT_APPS_DOMAIN }}"
 AUTH_URL: "https://{{ AUTH_HOST_NAME }}"
 AUTH_REALM: SMARTAQUACULTURE
 AUTH_CLIENT: smartaquaculture
-SITE_NAMESPACE: smartaquaculture
 WORKBENCH_SIZE: 20Gi
+WORKBENCH_NAME: vscode
 SITE_SHORT_NAME: smartaquaculture
 SITE_NAME: smart-aquaculture
 SITE_DESCRIPTION: Smart Aquaculture
@@ -19,6 +22,7 @@ SITE_SRC: "/opt/app-root/src/{{ SITE_NAME }}"
 SITE_THEME: dark
 COMPUTATE_SRC: "/opt/app-root/src/computate"
 COMPUTATE_VERTX_SRC: "/opt/app-root/src/computate-vertx"
-SOLR_NAMESPACE: solr
-DATABASE_NAMESPACE: postgres
+ZOOKEPER_NAMESPACE: "{{ SITE_NAMESPACE }}"
+SOLR_NAMESPACE: "{{ SITE_NAMESPACE }}"
+DATABASE_NAMESPACE: "{{ SITE_NAMESPACE }}"
 ENABLE_FIWARE: true

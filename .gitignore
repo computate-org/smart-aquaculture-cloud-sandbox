@@ -1,4 +1,5 @@
 .project
 .ipynb_checkpoints/**
 ansible_kernel.log
+vars.yaml
 
